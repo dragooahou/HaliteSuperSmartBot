@@ -1,0 +1,13 @@
+
+# Jetbrains
+.idea
+cmake-build-debug-visual-studio
+cmake-build-debug
+
+# Outputs
+*.hlt
+*.log
+*.exe
+*.pdb
+*.ilk
+
