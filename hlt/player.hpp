@@ -24,5 +24,14 @@ namespace hlt {
 
         void _update(int num_ships, int num_dropoffs, Halite halite);
         static std::shared_ptr<Player> _generate();
+
+        bool has_ship(EntityId ship_id) {
+            return ships.find(ship_id) != ships.end();
+        }
+
+        std::shared_ptr<Ship> get_ship(EntityId ship_id) {
+            return ships[ship_id];
+        }
+
     };
 }
