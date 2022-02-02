@@ -13,6 +13,8 @@
 | Const variable name         | VARIABLE_NAME  | VARIABLE_NAME    |
 | Function name               | FunctionName   | function_name    |
 | Combined (ptr+member)       | mpVariableName | mp_variable_name |
+| Enum field                  | EnumField      | enum_field       |
+| namespace name              | NamespaceName  | namespace_name   |
 
 ## Program Architecture
 
@@ -20,3 +22,4 @@
 
 One per ship (each chip can make one move per turn)
 One for the shipyard ?
+
