@@ -28,7 +28,11 @@ set(SOURCE_FILES "${SOURCE_FILES}"
 
         # Here the sources
 
-        src/BehaviourTree.cpp src/BehaviourTree.h)
+        src/BehaviourTree.cpp src/BehaviourTree.h
+        src/MainBehaviour.cpp src/MainBehaviour.h
+        src/InputNode.cpp src/InputNode.h
+        src/ActionNodes.cpp src/ActionNodes.h
+        src/PointOfInterest.cpp src/PointOfInterest.h src/AiNodes/ExploitPoi.cpp src/AiNodes/ExploitPoi.h)
 
 add_executable(HaliteSuperSmartBot ${SOURCE_FILES})
 

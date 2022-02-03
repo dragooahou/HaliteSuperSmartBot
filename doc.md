@@ -23,3 +23,17 @@
 One per ship (each chip can make one move per turn)
 One for the shipyard ?
 
+
+## IA ideas
+
+Trouver les points d'interêts (POI)
+Rusher les POI de notre côté dangereux (x > 20) avec 2 vaisseaux
+Rusher les POI safe avec un vaisseau
+Poser un dropoff sur le point de valeur du POI
+Commencer à pomper sur le 2eme point de valeur du POI
+Récolter l'halite
+Passer à la case suivante si 2 tour sur la case actuelle rapportent moins que 1 sur la suivante
+
+Un ennemi se présente devant notre POI :
+    - Toujours être en superiorité numérique
+    - Regarder si il est sur une case de valeur du POI
