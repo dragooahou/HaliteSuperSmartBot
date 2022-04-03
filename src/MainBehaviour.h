@@ -18,13 +18,19 @@ class MainBehaviour {
 
     bt::NodePtr tree;
 
-    int mPoiTreshold = 400;
-    std::vector<PointOfInterest> mPoiList;
+    int mPoiTreshold = 450;
+    int mInterrestingPoiTreshold = 750;
+
+    std::vector<PointOfInterest> mPoiList; // Poi are sorted by distance
 
     std::map<hlt::EntityId, bt::Ptr<ExploitPoi>> mShipBeahviours;
 
 public:
-    unsigned int mPoiToVisit = 0;
+    static constexpr int SHIP_PER_POI = 3;
+    static constexpr int MAX_SHIP_COUNT = 9;
+
+    int mPoiToVisit = 0;
+    int mShipCountOnCurrPoi = 0;
 
     explicit MainBehaviour(hlt::Game *mpGame);
 
@@ -33,6 +39,7 @@ public:
 private:
 
     void FindPointsOfInterrest();
+    void SelectMostInterrestingPoi();
 
 };
 

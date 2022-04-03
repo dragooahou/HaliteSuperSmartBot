@@ -21,6 +21,7 @@ public:
 private:
     PointOfInterest() = default;
 
+
 public:
 
     // Create a point of interest from a list of cells

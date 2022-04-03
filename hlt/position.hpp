@@ -60,6 +60,8 @@ namespace hlt {
                 directional_offset(Direction::EAST), directional_offset(Direction::WEST)
             }};
         }
+
+
     };
 
     static std::ostream& operator<<(std::ostream& out, const Position& position) {

@@ -25,19 +25,18 @@ int main(int argc, char* argv[]) {
     mt19937 rng(rng_seed);
     mt19937 real_rng(GetCurrentProcessId());
 
-//    Sleep(5000);
+    Sleep(5000);
 
     Game game;
 
     MainBehaviour mainBehaviour(&game);
-    mainBehaviour.mPoiToVisit = real_rng() % 15;
+//    mainBehaviour.mPoiToVisit = real_rng() % 15;
 
     game.ready("Halite Super Smart Bot");
 
     log::log("Successfully created bot! My Player ID is " + to_string(game.my_id) + ". Bot rng seed is " + to_string(rng_seed) + ".");
     hlt::log::log("hlt::constants::EXTRACT_RATIO = " + std::to_string(hlt::constants::EXTRACT_RATIO));
     hlt::log::log("hlt::constants::MOVE_COST_RATIO = " + std::to_string(hlt::constants::MOVE_COST_RATIO));
-
 
     for (;;) {
         game.update_frame();

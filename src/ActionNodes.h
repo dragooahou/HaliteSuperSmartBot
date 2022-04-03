@@ -54,9 +54,9 @@ namespace BehaviourTree {
         };
 
         class MoveTowardPositionPtr : public ShipActionNode {
-            hlt::Position* mpTargetPosition;
+            const hlt::Position* mpTargetPosition;
         public:
-            MoveTowardPositionPtr(int mShipId, hlt::Position* mpTargetPosition);
+            MoveTowardPositionPtr(int mShipId, const hlt::Position* mpTargetPosition);
             State Evaluate(hlt::Game &rGame, std::vector<hlt::Command> &rCommandQueue) const override;
             BT_GETNAME_OVERRIDE
         };

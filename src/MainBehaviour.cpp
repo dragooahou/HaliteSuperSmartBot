@@ -23,18 +23,27 @@ MainBehaviour::MainBehaviour(hlt::Game *mpGame) : mpGame(mpGame) {
         auto andNode = bt::Create<bt::AndNode>();
         {
 
+            // Check if we have a safe amount of halite
             andNode->AddChild(
-                        bt::Create<bt::InputNode>([](hlt::Game& rGame) { return rGame.me->halite >= 3000; })
+                        bt::Create<bt::InputNode>([](hlt::Game& rGame) { return rGame.me->halite >= 4000; })
                     );
 
+            // Check if the max amount of ship is reached
             andNode->AddChild(
-                    bt::Create<bt::InputNode>([](hlt::Game& rGame) { return rGame.me->ships.size() < 2; })
+                    bt::Create<bt::InputNode>([](hlt::Game& rGame) { return rGame.me->ships.size() < MAX_SHIP_COUNT; })
             );
 
+            // If it's not the end of the game
+            andNode->AddChild(
+                    bt::Create<bt::InputNode>([](hlt::Game& rGame) { return rGame.turn_number < 400; })
+            );
+
+            // Check if the shipyard is not occupied by a ship
             andNode->AddChild(
                     bt::Create<bt::InputNode>([](hlt::Game& rGame) { return !rGame.game_map->at(rGame.me->shipyard)->is_occupied(); })
             );
 
+            // Spawn new ship
             andNode->AddChild(
                     bt::Create<bt::ActionNodes::Spawn>()
             );
@@ -44,24 +53,42 @@ MainBehaviour::MainBehaviour(hlt::Game *mpGame) : mpGame(mpGame) {
     }
     tree = treeRoot;
 
+
+    // Find all the POI (Point of interest) on the map
     FindPointsOfInterrest();
+
+
+    // Choose the most interresting poi
+    mPoiToVisit = -1;
+    SelectMostInterrestingPoi();
+
 }
 
 std::vector<hlt::Command> MainBehaviour::Evaluate() {
     std::vector<hlt::Command> commandQueue;
+
+    // Evaluate the global behaviour (chef d'orchestre)
     tree->Evaluate(*mpGame,commandQueue);
 
+    // Iterate the ships and create a behaviour for the ones which doesn't already have one
     for (const auto & pair : mpGame->me->ships) {
         const hlt::EntityId& shipId = pair.first;
         std::shared_ptr<hlt::Ship> ship = pair.second;
 
+        // If no behaviour
         if(mShipBeahviours.find(shipId) == mShipBeahviours.end()) {
             mShipBeahviours[shipId] = bt::Create<ExploitPoi>(shipId, &mPoiList[mPoiToVisit]);
+
+            ++mShipCountOnCurrPoi;
+            if(mShipCountOnCurrPoi >= SHIP_PER_POI) {
+                SelectMostInterrestingPoi();
+                mShipCountOnCurrPoi = 0;
+            }
         }
     }
 
+    // region Evaluate or remove behaviour of destroyed ships
     std::vector<hlt::EntityId> destroyedShips;
-
     for (auto& pair : mShipBeahviours) {
         const hlt::EntityId& shipId = pair.first;
         bt::Ptr<ExploitPoi> shipTree = pair.second;
@@ -72,11 +99,12 @@ std::vector<hlt::Command> MainBehaviour::Evaluate() {
         else {
             destroyedShips.push_back(shipId);
         }
-    }
 
+    }
     for(const auto& shipId : destroyedShips) {
         mShipBeahviours.erase(shipId);
     }
+    // endregion
     
     return commandQueue;
 }
@@ -105,14 +133,43 @@ void MainBehaviour::FindPointsOfInterrest() {
     // Build the points of interest
     while (mpGame->game_map->at(*positions.begin())->halite > mPoiTreshold) {
         mPoiList.push_back(PointOfInterest::CreateFromList(*mpGame->game_map, positions, mPoiTreshold));
+        hlt::log::log("Created POI : " + mPoiList.back().mOrigin.to_string());
     }
+}
 
-    /*
-    std::stringstream msg;
-    msg << "Found " << mPoiList.size() << " POI : \n";
-    for (const auto& poi : mPoiList) {
-        msg << "\t" << poi.mOrigin.to_string() << "\n";
+void MainBehaviour::SelectMostInterrestingPoi() {
+
+    int closestPoiIdx = -1;
+    int closestPoiDist = INT_MAX;
+    while(closestPoiIdx == -1) {
+
+        for(int i = mPoiToVisit+1; i < mPoiList.size(); i++) {
+
+            int halite = mpGame->game_map->at(mPoiList[i].mOrigin)->halite;
+            int dist = mpGame->game_map->calculate_distance(mpGame->me->shipyard->position, mPoiList[i].mOrigin);
+
+            // If this poi is not insterresting skip it
+            if(halite < mInterrestingPoiTreshold) continue;
+
+            // Check if this poi is more valuable
+            if(dist < closestPoiDist) {
+                closestPoiDist = dist;
+                closestPoiIdx = i;
+            }
+
+        }
+
+        // Lower the poi interresting treshold if none has been found
+        if(closestPoiIdx == -1) {
+            mInterrestingPoiTreshold = std::max(0, mInterrestingPoiTreshold-100);
+            if(mInterrestingPoiTreshold == 0) {
+                closestPoiIdx = 0;
+                break;
+            }
+        }
+
     }
-    hlt::log::log(msg.str());
-    */
+    mPoiToVisit = closestPoiIdx;
+    hlt::log::log("choose poi : " + mPoiList[mPoiToVisit].mOrigin.to_string() + ", shipyard : " + mpGame->me->shipyard->position.to_string() + ", dist = " + std::to_string(closestPoiDist));
+
 }
