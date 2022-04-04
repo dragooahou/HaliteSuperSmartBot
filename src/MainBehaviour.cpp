@@ -25,17 +25,17 @@ MainBehaviour::MainBehaviour(hlt::Game *mpGame) : mpGame(mpGame) {
 
             // Check if we have a safe amount of halite
             andNode->AddChild(
-                        bt::Create<bt::InputNode>([](hlt::Game& rGame) { return rGame.me->halite >= 4000; })
+                        bt::Create<bt::InputNode>([](hlt::Game& rGame) { return rGame.turn_number < 100 || rGame.me->halite >= 4000; })
                     );
 
             // Check if the max amount of ship is reached
-            andNode->AddChild(
-                    bt::Create<bt::InputNode>([](hlt::Game& rGame) { return rGame.me->ships.size() < MAX_SHIP_COUNT; })
-            );
+//            andNode->AddChild(
+//                    bt::Create<bt::InputNode>([](hlt::Game& rGame) { return rGame.me->ships.size() < MAX_SHIP_COUNT; })
+//            );
 
             // If it's not the end of the game
             andNode->AddChild(
-                    bt::Create<bt::InputNode>([](hlt::Game& rGame) { return rGame.turn_number < 400; })
+                    bt::Create<bt::InputNode>([](hlt::Game& rGame) { return rGame.turn_number < 310; })
             );
 
             // Check if the shipyard is not occupied by a ship
@@ -77,13 +77,11 @@ std::vector<hlt::Command> MainBehaviour::Evaluate() {
 
         // If no behaviour
         if(mShipBeahviours.find(shipId) == mShipBeahviours.end()) {
-            mShipBeahviours[shipId] = bt::Create<ExploitPoi>(shipId, &mPoiList[mPoiToVisit]);
 
-            ++mShipCountOnCurrPoi;
-            if(mShipCountOnCurrPoi >= SHIP_PER_POI) {
-                SelectMostInterrestingPoi();
-                mShipCountOnCurrPoi = 0;
-            }
+            hlt::Position positionToGo = mpGame->turn_number < 500 ? mpGame->me->shipyard->position : mPoiList[mPoiToVisit].mOrigin;
+
+            mShipBeahviours[shipId] = bt::Create<ExploitPosition>(shipId, positionToGo);
+
         }
     }
 
@@ -91,7 +89,7 @@ std::vector<hlt::Command> MainBehaviour::Evaluate() {
     std::vector<hlt::EntityId> destroyedShips;
     for (auto& pair : mShipBeahviours) {
         const hlt::EntityId& shipId = pair.first;
-        bt::Ptr<ExploitPoi> shipTree = pair.second;
+        bt::Ptr<ExploitPosition> shipTree = pair.second;
 
         if(mpGame->me->has_ship(shipId)) {
             shipTree->Evaluate(*mpGame, commandQueue);
@@ -105,6 +103,22 @@ std::vector<hlt::Command> MainBehaviour::Evaluate() {
         mShipBeahviours.erase(shipId);
     }
     // endregion
+
+    // If a ship's position to exploit is 0, give him an other
+    for (const auto & pair : mpGame->me->ships) {
+        const hlt::EntityId &shipId = pair.first;
+        auto ship= mpGame->me->get_ship(shipId);
+
+        if(mpGame->game_map->at(mShipBeahviours[shipId]->mPositionToExploit)->halite == 0) {
+            mShipBeahviours[shipId]->mPositionToExploit = mPoiList[mPoiToVisit].mOrigin;
+
+            ++mShipCountOnCurrPoi;
+            if(mShipCountOnCurrPoi >= SHIP_PER_POI) {
+                SelectMostInterrestingPoi();
+                mShipCountOnCurrPoi = 0;
+            }
+        }
+    }
     
     return commandQueue;
 }

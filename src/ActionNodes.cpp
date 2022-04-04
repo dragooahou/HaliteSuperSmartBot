@@ -39,7 +39,11 @@ BehaviourTree::ActionNodes::ShipActionNode::ShipActionNode(int mShipId) : mShipI
 BehaviourTree::State BehaviourTree::ActionNodes::StayStill::Evaluate(hlt::Game &rGame, std::vector<hlt::Command> &rCommandQueue) const {
     BT_EVALUATE_LOG_TREE
 
-    rCommandQueue.push_back(rGame.me->get_ship(mShipID)->stay_still());
+    auto ship = rGame.me->get_ship(mShipID);
+
+    if(rGame.game_map->at(ship->position)->halite == 0) return State::Failure;
+    
+    rCommandQueue.push_back(ship->stay_still());
     return State::Success;
 }
 

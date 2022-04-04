@@ -10,6 +10,10 @@ void BehaviourTree::MultiChildrenNode::AddChild(const BehaviourTree::NodePtr &no
     mChildren.push_back(node);
 }
 
+void BehaviourTree::MultiChildrenNode::ReplaceChild(int idx, const BehaviourTree::NodePtr &node) {
+    mChildren[idx] = node;
+}
+
 BehaviourTree::State BehaviourTree::Selector::Evaluate(hlt::Game& rGame, std::vector<hlt::Command>& rCommandQueue) const {
     assert(!mChildren.empty());
 

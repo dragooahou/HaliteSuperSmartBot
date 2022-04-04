@@ -70,6 +70,7 @@ namespace BehaviourTree {
         std::vector<NodePtr> mChildren;
     public:
         void AddChild(const NodePtr& node);
+        void ReplaceChild(int idx, const NodePtr& node);
     };
 
 

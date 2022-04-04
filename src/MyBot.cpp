@@ -25,7 +25,7 @@ int main(int argc, char* argv[]) {
     mt19937 rng(rng_seed);
     mt19937 real_rng(GetCurrentProcessId());
 
-    Sleep(5000);
+//    Sleep(5000);
 
     Game game;
 

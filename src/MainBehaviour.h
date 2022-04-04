@@ -23,11 +23,11 @@ class MainBehaviour {
 
     std::vector<PointOfInterest> mPoiList; // Poi are sorted by distance
 
-    std::map<hlt::EntityId, bt::Ptr<ExploitPoi>> mShipBeahviours;
+    std::map<hlt::EntityId, bt::Ptr<ExploitPosition>> mShipBeahviours;
 
 public:
-    static constexpr int SHIP_PER_POI = 3;
-    static constexpr int MAX_SHIP_COUNT = 9;
+    static constexpr int SHIP_PER_POI = 5;
+    static constexpr int MAX_SHIP_COUNT = 30;
 
     int mPoiToVisit = 0;
     int mShipCountOnCurrPoi = 0;
