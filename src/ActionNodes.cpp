@@ -23,7 +23,7 @@ BehaviourTree::State BehaviourTree::ActionNodes::MakeDropoff::Evaluate(hlt::Game
     hlt::Halite shipCargo = ship->halite;
     hlt::Halite inTheSea = rGame.game_map->at(ship)->halite;
 
-    hlt::log::log(" >>>>> " + std::to_string(rGame.me->halite + shipCargo + inTheSea) + " < " + std::to_string(hlt::constants::DROPOFF_COST));
+//    hlt::log::log(" >>>>> " + std::to_string(rGame.me->halite + shipCargo + inTheSea) + " < " + std::to_string(hlt::constants::DROPOFF_COST));
     if((rGame.me->halite + shipCargo + inTheSea) < hlt::constants::DROPOFF_COST) return State::Failure;
 
     if(rGame.game_map->at(ship)->has_structure()) return State::Failure;
@@ -77,7 +77,7 @@ BehaviourTree::ActionNodes::MoveTowardPositionPtr::MoveTowardPositionPtr(int mSh
 BehaviourTree::State BehaviourTree::ActionNodes::MoveTowardPositionPtr::Evaluate(hlt::Game &rGame, std::vector<hlt::Command> &rCommandQueue) const {
     BT_EVALUATE_LOG_TREE
 
-    hlt::log::log(" >>> Move to " + mpTargetPosition->to_string());
+//    hlt::log::log(" >>> Move to " + mpTargetPosition->to_string());
 
     auto ship = rGame.me->get_ship(mShipID);
     if(ship->position == *mpTargetPosition) return State::Success;

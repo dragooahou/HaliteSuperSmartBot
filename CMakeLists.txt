@@ -32,7 +32,7 @@ set(SOURCE_FILES "${SOURCE_FILES}"
         src/MainBehaviour.cpp src/MainBehaviour.h
         src/InputNode.cpp src/InputNode.h
         src/ActionNodes.cpp src/ActionNodes.h
-        src/PointOfInterest.cpp src/PointOfInterest.h src/AiNodes/ExploitPoi.cpp src/AiNodes/ExploitPoi.h)
+        src/PointOfInterest.cpp src/PointOfInterest.h src/AiNodes/ExploitPosition.cpp src/AiNodes/ExploitPosition.h)
 
 add_executable(HaliteSuperSmartBot ${SOURCE_FILES})
 

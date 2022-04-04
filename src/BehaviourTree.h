@@ -10,9 +10,12 @@
 #include <memory>
 #include "game.hpp"
 
+// Debug macro for printing the trees
 #define BT_LOG_TREE 1
 #if BT_LOG_TREE
+
 #define BT_GETNAME_OVERRIDE std::string GetName() const override { return typeid(this).name(); }
+
 #define BT_EVALUATE_LOG_TREE_CHILDREN                                                           \
     {                                                                                           \
     std::string msg;                                                                            \
@@ -20,6 +23,7 @@
     for(const auto& child : mChildren) child->depth = depth+1;                                  \
     hlt::log::log(msg + GetName());                                                             \
     }
+
 #define BT_EVALUATE_LOG_TREE_CHILD                                                              \
     {                                                                                           \
     std::string msg;                                                                            \
@@ -27,12 +31,14 @@
     mpChild->depth = depth+1;                                                                   \
     hlt::log::log(msg + GetName());                                                             \
     }
+
 #define BT_EVALUATE_LOG_TREE                                                                    \
     {                                                                                           \
     std::string msg;                                                                            \
     for(int i = 0; i < depth; ++i) msg += "\t";                                                 \
     hlt::log::log(msg + GetName());                                                             \
     }
+
 #else
 #define BT_GETNAME_OVERRIDE
 #define BT_EVALUATE_LOG_TREE_CHILDREN
@@ -49,9 +55,6 @@ namespace BehaviourTree {
         Failure,
         Running
     };
-
-
-
 
     class Node {
     public:

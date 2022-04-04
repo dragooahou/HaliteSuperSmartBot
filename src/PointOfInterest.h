@@ -13,8 +13,11 @@ class PointOfInterest {
 public:
     // The origin is always the cell with the most halite
     hlt::Position mOrigin;
+
+    // All the position in the poi
     std::vector<hlt::Position> mPositions;
 
+    // Total halite in the poi
     hlt::Halite mTotalHalite = 0;
 
 
@@ -29,6 +32,7 @@ public:
     // and search around. The search stop when a cell is under the halite treshold
     static PointOfInterest CreateFromList(hlt::GameMap &rMap, std::vector<hlt::Position> &rPositionList, int treshold);
 
+    // Check if the position is inside the poi
     bool IsInside(const hlt::Position& position);
     
 };

@@ -23,15 +23,10 @@ MainBehaviour::MainBehaviour(hlt::Game *mpGame) : mpGame(mpGame) {
         auto andNode = bt::Create<bt::AndNode>();
         {
 
-            // Check if we have a safe amount of halite
+            // Check if we are at the beginning of the game, or we have a safe amount of halite
             andNode->AddChild(
                         bt::Create<bt::InputNode>([](hlt::Game& rGame) { return rGame.turn_number < 100 || rGame.me->halite >= 4000; })
                     );
-
-            // Check if the max amount of ship is reached
-//            andNode->AddChild(
-//                    bt::Create<bt::InputNode>([](hlt::Game& rGame) { return rGame.me->ships.size() < MAX_SHIP_COUNT; })
-//            );
 
             // If it's not the end of the game
             andNode->AddChild(
@@ -77,23 +72,22 @@ std::vector<hlt::Command> MainBehaviour::Evaluate() {
 
         // If no behaviour
         if(mShipBeahviours.find(shipId) == mShipBeahviours.end()) {
-
-            hlt::Position positionToGo = mpGame->turn_number < 500 ? mpGame->me->shipyard->position : mPoiList[mPoiToVisit].mOrigin;
-
-            mShipBeahviours[shipId] = bt::Create<ExploitPosition>(shipId, positionToGo);
-
+            mShipBeahviours[shipId] = bt::Create<ExploitPosition>(shipId, mpGame->me->shipyard->position);
         }
     }
 
-    // region Evaluate or remove behaviour of destroyed ships
+    // Evaluate or remove behaviour of destroyed ships
     std::vector<hlt::EntityId> destroyedShips;
     for (auto& pair : mShipBeahviours) {
         const hlt::EntityId& shipId = pair.first;
         bt::Ptr<ExploitPosition> shipTree = pair.second;
 
+        // If the ship still exists
         if(mpGame->me->has_ship(shipId)) {
             shipTree->Evaluate(*mpGame, commandQueue);
         }
+
+        // The ship doesn't exist anymore
         else {
             destroyedShips.push_back(shipId);
         }
@@ -102,7 +96,6 @@ std::vector<hlt::Command> MainBehaviour::Evaluate() {
     for(const auto& shipId : destroyedShips) {
         mShipBeahviours.erase(shipId);
     }
-    // endregion
 
     // If a ship's position to exploit is 0, give him an other
     for (const auto & pair : mpGame->me->ships) {
